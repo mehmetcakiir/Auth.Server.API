@@ -17,7 +17,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SecondApp.API", "SecondApp.
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ThirdApp.API", "ThirdApp.API\ThirdApp.API.csproj", "{C7AF50F4-A05D-4686-AFCC-23890619C2DB}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AuthServer.Shared", "CommonLibrary\AuthServer.Shared.csproj", "{B7FB4EB0-E3A9-4389-9FBD-55F21130714D}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CommonLibrary", "CommonLibrary\CommonLibrary.csproj", "{B7FB4EB0-E3A9-4389-9FBD-55F21130714D}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

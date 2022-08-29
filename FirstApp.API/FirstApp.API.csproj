@@ -13,7 +13,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\CommonLibrary\AuthServer.Shared.csproj" />
+    <ProjectReference Include="..\CommonLibrary\CommonLibrary.csproj" />
   </ItemGroup>
 
 </Project>
