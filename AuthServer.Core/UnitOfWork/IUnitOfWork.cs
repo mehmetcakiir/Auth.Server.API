@@ -11,6 +11,9 @@ namespace AuthServer.Core.UnitOfWork
      * 
      * Veri tabanı işlemlerinin toplu bir şekilde tek transactionda yapılması veri tabanına yapılan istek sayısını azaltacağı için sistemi rahatlatacaktir.
      * 
+     * Veri tabanı işlemlerinin toplu bir şekilde tek transactionda yapılması tablonun 1 propertisi dahi güncellenecek olsa bile tüm propertiler baştan güncellenir.
+     * Bu işlem verimliliği olumsuz yönde etkilemektedir.
+     * 
      * İşlemlerin tek tarnsactionda yapılması veri tabanına yapılan isteklerden birinin dahi hata alınması durumunda EfCore rolback yapılarak veri güvenliği sağlanır
      * 
      * saveChange() methodu çağrılana kadar yapılan işlemler memory de tutulur.
@@ -26,7 +29,7 @@ namespace AuthServer.Core.UnitOfWork
      * SaveStock.add(stock);
      * saveChange();
      */
-     
+
 
     /*
      * IUnitOfWork lü Örnek

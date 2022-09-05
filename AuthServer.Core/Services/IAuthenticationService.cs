@@ -25,7 +25,7 @@ namespace AuthServer.Core.Services
 
 
         /*
-         * Login gerektiren AccessToken almak
+         * Login gerektirmeyen AccessToken almak
          */
 
         Task<Response<ClientLoginDto>> CreateTokenByClient(ClientLoginDto clientLoginDto);
