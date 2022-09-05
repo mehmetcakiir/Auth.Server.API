@@ -17,7 +17,7 @@ namespace AuthServer.Core.Repositories
         Task<TEntity> GetByIdAsycn(int id);
 
         //Tüm verileri al
-        IEnumerable<TEntity> GetAll();
+        IEnumerable<TEntity> GetAllAsyc();
 
         //Filitreleme koşuluna göre verileri al
         IQueryable<TEntity> Where(Expression<Func<TEntity, bool>> predicate);
@@ -27,5 +27,8 @@ namespace AuthServer.Core.Repositories
 
         //Veriyi güncelle
         TEntity Update(TEntity entity);
+
+        //Veri ekle
+        Task AddAsync (TEntity entity);
     }
 }
