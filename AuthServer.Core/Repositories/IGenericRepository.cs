@@ -17,7 +17,7 @@ namespace AuthServer.Core.Repositories
         Task<TEntity> GetByIdAsycn(int id);
 
         //Tüm verileri al
-        IEnumerable<TEntity> GetAllAsyc();
+        Task<IEnumerable<TEntity>> GetAllAsyc();
 
         //Filitreleme koşuluna göre verileri al
         IQueryable<TEntity> Where(Expression<Func<TEntity, bool>> predicate);
