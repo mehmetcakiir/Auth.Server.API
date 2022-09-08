@@ -12,7 +12,12 @@ namespace AuthServer.Core.Services
     public interface IServiceGeneric<TEntity,TDto> where TEntity : class where TDto : class
     {
         /* Methodlar AutoServer.Core katmanında bulunan IGenericRepository e benzesede, methodların dönüş tipleri kendi oluşturduğumuz CommonLibrary katmanında
-        bulunan Response olarak revize edilir. */
+        bulunan Response olarak revize edilir.
+        
+
+        Methodların giriş ve çıkış parametreleri TDto olmasının sebebi API larla TDto nesneleri üzerinden, veri tabanı ile TEntity ler üzerinden iletişim kutulacak.
+         
+        */
 
 
         //Id ye göre getir
@@ -26,9 +31,11 @@ namespace AuthServer.Core.Services
 
         /* Veriyi sil (Bu aksiyonda geriye herhangi bir veri dönmeye gerek olmayacağı için CommonLibrary katmanının içinde bulunan Dtos klasörü içerisine
          NoDataDto adında boş bir sınıf oluşturularak Remove methodunun dönüş değerine verilir.) */
-        Task<Response<NoDataDto>> Remove(TEntity entity);
+        Task<Response<NoDataDto>> Remove(TDto entity);
 
         //Veriyi güncelle
-        Task<Response<NoDataDto>> Update(TEntity entity);
+        Task<Response<NoDataDto>> Update(TDto entity);
+
+        Task<Response<TDto>> AddAsync(TDto entity);
     }
 }
