@@ -3,6 +3,7 @@ using AuthServer.Core.Services;
 using AuthServer.Core.UnitOfWork;
 using AuthServer.Data.UnitOfWork;
 using CommonLibrary.Dtos;
+using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -46,24 +47,62 @@ namespace AuthServer.Service.Services
             return Response<IEnumerable<TDto>>.Succes(products, 200);
         }
 
-        public Task<Response<TDto>> GetByIdAsycn(int id)
+        public async Task<Response<TDto>> GetByIdAsycn(int id)
         {
-            throw new NotImplementedException();
+            var entity = await _genericRepository.GetByIdAsycn(id);
+
+            if (entity == null)
+            {
+                return Response<TDto>.Faild("Not fount id", 404, true);
+            }
+             var returnEntity = ObjectMapper.mapper.Map<TDto>(entity);
+            return Response<TDto>.Succes(returnEntity,200);
         }
 
-        public Task<Response<NoDataDto>> Remove(TDto entity)
+        public async Task<Response<NoDataDto>> Remove(int id)
         {
-            throw new NotImplementedException();
+            var entity = await _genericRepository.GetByIdAsycn(id);
+
+            if (entity == null)
+            {
+                return Response<NoDataDto>.Faild("Notfount id", 404, true); 
+            }
+            _genericRepository.Remove(entity);
+
+            await _unitOfWork.CommitAsync();
+            return Response<NoDataDto>.Succes(202);
         }
 
-        public Task<Response<NoDataDto>> Update(TDto entity)
+        public async Task<Response<NoDataDto>> Update(TDto entity, int id)
         {
-            throw new NotImplementedException();
+            var controlEntity = await _genericRepository.GetByIdAsycn(id);
+
+            if (controlEntity == null)
+            {
+                return Response<NoDataDto>.Faild("Not fount Id", 404, true);
+            }
+
+            var updateEntity = ObjectMapper.mapper.Map<TEntity>(controlEntity);
+
+            _genericRepository.Update(updateEntity);
+
+            await _unitOfWork.CommitAsync();
+            
+            return Response<NoDataDto>.Succes(204);
         }
 
-        public Task<Response<IEnumerable<TDto>>> Where(Expression<Func<TEntity, bool>> predicate)
+        public async Task<Response<IEnumerable<TDto>>> Where(Expression<Func<TEntity, bool>> predicate)
         {
-            throw new NotImplementedException();
+            var filterList = await _genericRepository.Where(predicate).ToListAsync();
+
+           
+
+            if (filterList == null)
+            {
+                return Response<IEnumerable<TDto>>.Faild("Data not found", 404, true);
+            }
+
+            return Response<IEnumerable<TDto>>.Succes(ObjectMapper.mapper.Map<IEnumerable<TDto>>(filterList), 200);
         }
     }
 }

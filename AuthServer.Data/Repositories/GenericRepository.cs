@@ -39,7 +39,13 @@ namespace AuthServer.Data.Repositories
         //Verilen Id ye göre veri tabanından entity i çeker 
         public async Task<TEntity> GetByIdAsycn(int id)
         {
-            return await _dbSet.FindAsync(id);
+            var entity = await _dbSet.FindAsync(id); 
+
+            if (entity != null)
+            {
+                _dbContext.Entry(entity).State = EntityState.Detached;
+            }
+            return entity;
         }
 
         //Verilen entity i veri tabanına ekler

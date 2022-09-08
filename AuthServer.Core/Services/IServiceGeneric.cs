@@ -31,10 +31,10 @@ namespace AuthServer.Core.Services
 
         /* Veriyi sil (Bu aksiyonda geriye herhangi bir veri dönmeye gerek olmayacağı için CommonLibrary katmanının içinde bulunan Dtos klasörü içerisine
          NoDataDto adında boş bir sınıf oluşturularak Remove methodunun dönüş değerine verilir.) */
-        Task<Response<NoDataDto>> Remove(TDto entity);
+        Task<Response<NoDataDto>> Remove(int id);
 
         //Veriyi güncelle
-        Task<Response<NoDataDto>> Update(TDto entity);
+        Task<Response<NoDataDto>> Update(TDto entity, int id);
 
         Task<Response<TDto>> AddAsync(TDto entity);
     }
