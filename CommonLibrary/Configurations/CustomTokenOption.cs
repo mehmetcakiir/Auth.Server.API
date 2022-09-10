@@ -8,7 +8,7 @@ namespace CommonLibrary.Configurations
 {
     public class CustomTokenOption
     {
-        public List<String> MyPAudienceroperty { get; set; }
+        public List<String> Audience { get; set; }
 
         public string Issuer { get; set; }
 
