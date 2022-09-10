@@ -1,3 +1,4 @@
+using CommonLibrary.Configurations;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc;
@@ -25,6 +26,10 @@ namespace Auth.Server.API
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
+            /*
+             * CustomTokenOption u git appsettingjson içerisinden TakenOption olaný al
+             */
+            services.Configure<CustomTokenOption>(Configuration.GetSection("TokenOption"));
 
             services.AddControllers();
             services.AddSwaggerGen(c =>
