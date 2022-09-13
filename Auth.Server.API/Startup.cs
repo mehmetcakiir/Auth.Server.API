@@ -1,3 +1,4 @@
+using AuthServer.Core.Configiration;
 using CommonLibrary.Configurations;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
@@ -30,6 +31,11 @@ namespace Auth.Server.API
              * CustomTokenOption u git appsettingjson içerisinden TakenOption olaný al
              */
             services.Configure<CustomTokenOption>(Configuration.GetSection("TokenOption"));
+
+            /*
+             * Client ý git appsettingjson içerisindenClient olaný al
+             */
+            services.Configure<List<Client>>(Configuration.GetSection("Clients"));
 
             services.AddControllers();
             services.AddSwaggerGen(c =>
