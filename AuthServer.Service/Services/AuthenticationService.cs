@@ -6,6 +6,7 @@ using AuthServer.Core.Services;
 using AuthServer.Core.UnitOfWork;
 using CommonLibrary.Dtos;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
 using System;
 using System.Collections.Generic;
@@ -17,7 +18,7 @@ namespace AuthServer.Service.Services
 {
     public class AuthenticationService : IAuthenticationService
     {
-        //Lientlar için
+        //CLientlar için
         private readonly List<Client> _clients;
 
         //Token oluşturabilmek için
@@ -35,6 +36,9 @@ namespace AuthServer.Service.Services
 
         /*
          * Clientlar apsetting dosyasından okunacağı için IOptions tan alınır.
+         * Token üretebilmek için ITOkenService kullanılır
+         * Kullanıcı işlemleri için UserManeger<UserApp> kullanılır.
+         * Veri tabanı işlemleri için IUnitOfWork kullanılır
          */
         public AuthenticationService(IOptions<List<Client>> clients, ITokenService tokenService, UserManager<UserApp> userManager, IUnitOfWork unitOfWork,
             IGenericRepository<UserRefreshToken> userRefreshTokenService)
@@ -46,14 +50,62 @@ namespace AuthServer.Service.Services
             _userRefreshTokenService = userRefreshTokenService;
         }
 
-        public Task<Response<TokenDto>> CreateTokenAsync(LoginDto loginDto)
+        //Üyelik gerektiren token
+        public async Task<Response<TokenDto>> CreateTokenAsync(LoginDto loginDto)
         {
-            throw new NotImplementedException();
+
+            //LoginDto kontrolü
+            if (loginDto == null) throw new ArgumentNullException(nameof(loginDto));
+
+            var user = await _userManager.FindByEmailAsync(loginDto.Email);
+
+            //Kullanıcı kontrol edilir
+            if (user == null) return Response<TokenDto>.Faild("Email or Password is wrong",400,true);
+
+            //Şifre kontrol
+            if(await _userManager.CheckPasswordAsync(user, loginDto.Password) == null) return Response<TokenDto>.Faild("Email or Password is wrong", 400, true);
+
+            //Token Üretilit
+            var token = _tokenService.CreateToken(user);
+
+            //Daha öncesinde ResfreshToken olup olmadığı kontrol edilir.
+            //(SingleOrDefault metodu koleksiyonda, listede bulunan değerlerden şartımıza uyan değeri tek kayıt olarak bize geri döner. Birden fazla ise hata verir.)
+            var userRefreshToken = await _userRefreshTokenService.Where(x => x.UserId == user.Id).SingleOrDefaultAsync();
+
+            //RefreshToken yok ise
+            if (userRefreshToken == null)
+            {
+                await _userRefreshTokenService.AddAsync(new UserRefreshToken {
+                    UserId = user.Id,
+                    RefreshTokenCode = token.RefreshToken,
+                    Expretion = token.RefreshTokenExpiration 
+                });
+            }
+            else
+            {
+                userRefreshToken.RefreshTokenCode = token.RefreshToken;
+                userRefreshToken.Expretion = token.RefreshTokenExpiration;
+            }
+
+            await _unitOfWork.CommitAsync();
+
+            return Response<TokenDto>.Succes(token, 200);
         }
 
-        public Task<Response<ClientLoginDto>> CreateTokenByClient(ClientLoginDto clientLoginDto)
+        //Üyelik gerektirmeyen token
+        public Response<ClientTokenDto> CreateTokenByClient(ClientLoginDto clientLoginDto)
         {
-            throw new NotImplementedException();
+            //Client alınır.
+            var userClient = _clients.FirstOrDefault(x => x.ClientId == clientLoginDto.ClientId && x.ClientSecret == clientLoginDto.ClientSecret);
+
+            //Client kontrol edilir
+            if (userClient == null) return Response<ClientTokenDto>.Faild("ClientId or ClientSecret not found", 404, true);
+
+            //Token Üretilir
+            var token = _tokenService.CreateClientToken(userClient);
+
+            return Response<ClientTokenDto>.Succes(token, 200);
+            
         }
 
         public Task<Response<TokenDto>> CreateTokenByRefreshToken(string refreshToken)
@@ -61,6 +113,7 @@ namespace AuthServer.Service.Services
             throw new NotImplementedException();
         }
 
+        //RefreshToken ı geçersiz kılmak
         public Task<Response<NoDataDto>> RevokeRefreshToken(string refreshToken)
         {
             throw new NotImplementedException();

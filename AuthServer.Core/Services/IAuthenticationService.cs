@@ -28,6 +28,6 @@ namespace AuthServer.Core.Services
          * Login gerektirmeyen AccessToken almak
          */
 
-        Task<Response<ClientLoginDto>> CreateTokenByClient(ClientLoginDto clientLoginDto);
+        Response<ClientTokenDto> CreateTokenByClient(ClientLoginDto clientLoginDto);
     }
 }
