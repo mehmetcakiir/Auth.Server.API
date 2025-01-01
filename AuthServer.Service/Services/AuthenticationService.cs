@@ -60,17 +60,20 @@ namespace AuthServer.Service.Services
             var user = await _userManager.FindByEmailAsync(loginDto.Email);
 
             //Kullanıcı kontrol edilir
-            if (user == null) return Response<TokenDto>.Faild("Email or Password is wrong",400,true);
+            if (user == null) return Response<TokenDto>.Fail("Email or Password is wrong",400,true);
 
             //Şifre kontrol
-            if(await _userManager.CheckPasswordAsync(user, loginDto.Password) == null) return Response<TokenDto>.Faild("Email or Password is wrong", 400, true);
+            if(!await _userManager.CheckPasswordAsync(user, loginDto.Password)) 
+                return Response<TokenDto>.Fail("Email or Password is wrong", 400, true);
 
             //Token Üretilit
             var token = _tokenService.CreateToken(user);
 
             //Daha öncesinde ResfreshToken olup olmadığı kontrol edilir.
-            //(SingleOrDefault metodu koleksiyonda, listede bulunan değerlerden şartımıza uyan değeri tek kayıt olarak bize geri döner. Birden fazla ise hata verir.)
-            var userRefreshToken = await _userRefreshTokenService.Where(x => x.UserId == user.Id).SingleOrDefaultAsync();
+            //(SingleOrDefault metodu koleksiyonda, listede bulunan değerlerden şartımıza
+            //uyan değeri tek kayıt olarak bize geri döner. Birden fazla ise hata verir.)
+            var userRefreshToken = await _userRefreshTokenService
+                .Where(x => x.UserId == user.Id).SingleOrDefaultAsync();
 
             //RefreshToken yok ise
             if (userRefreshToken == null)
@@ -89,7 +92,7 @@ namespace AuthServer.Service.Services
 
             await _unitOfWork.CommitAsync();
 
-            return Response<TokenDto>.Succes(token, 200);
+            return Response<TokenDto>.Success(token, 200);
         }
 
         //Üyelik gerektirmeyen token
@@ -99,12 +102,12 @@ namespace AuthServer.Service.Services
             var userClient = _clients.FirstOrDefault(x => x.ClientId == clientLoginDto.ClientId && x.ClientSecret == clientLoginDto.ClientSecret);
 
             //Client kontrol edilir
-            if (userClient == null) return Response<ClientTokenDto>.Faild("ClientId or ClientSecret not found", 404, true);
+            if (userClient == null) return Response<ClientTokenDto>.Fail("ClientId or ClientSecret not found", 404, true);
 
             //Token Üretilir
             var token = _tokenService.CreateClientToken(userClient);
 
-            return Response<ClientTokenDto>.Succes(token, 200);
+            return Response<ClientTokenDto>.Success(token, 200);
             
         }
 

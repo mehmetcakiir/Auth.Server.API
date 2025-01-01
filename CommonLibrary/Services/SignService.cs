@@ -5,7 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace AuthServer.Service.Services 
+namespace CommonLibrary.Services
 {
     /*
      * !!!!!! Token imzalama işlemi 2 farklı şekilde yapılabilir. Bunlar asimetrik ve simetriktir !!!!!!
@@ -23,9 +23,9 @@ namespace AuthServer.Service.Services
     // Bu sınıfta Tokenların şifreleme işlemleri için kullanılır.
     public static class SignService
     {
-        public static SecurityKey GetSymmetricSecurtyKey(string securtyKey)
+        public static SecurityKey GetSymmetricSecurtyKey(string securityKey)
         {
-            return new SymmetricSecurityKey(Encoding.UTF8.GetBytes(securtyKey));
+            return new SymmetricSecurityKey(Encoding.UTF8.GetBytes(securityKey));
         }
     }
 }

@@ -36,7 +36,7 @@ namespace AuthServer.Service.Services
 
             await _unitOfWork.CommitAsync();
 
-            return Response<TDto>.Succes(entity, 200);
+            return Response<TDto>.Success(entity, 200);
         }
 
         public async Task<Response<IEnumerable<TDto>>> GetAll()
@@ -44,7 +44,7 @@ namespace AuthServer.Service.Services
             //Veri tabanından alınan TEntity ler TDto lara çevrilir.
             var products = ObjectMapper.mapper.Map<List<TDto>>(await _genericRepository.GetAllAsyc());
 
-            return Response<IEnumerable<TDto>>.Succes(products, 200);
+            return Response<IEnumerable<TDto>>.Success(products, 200);
         }
 
         public async Task<Response<TDto>> GetByIdAsycn(int id)
@@ -53,10 +53,10 @@ namespace AuthServer.Service.Services
 
             if (entity == null)
             {
-                return Response<TDto>.Faild("Not fount id", 404, true);
+                return Response<TDto>.Fail("Not fount id", 404, true);
             }
              var returnEntity = ObjectMapper.mapper.Map<TDto>(entity);
-            return Response<TDto>.Succes(returnEntity,200);
+            return Response<TDto>.Success(returnEntity,200);
         }
 
         public async Task<Response<NoDataDto>> Remove(int id)
@@ -65,12 +65,13 @@ namespace AuthServer.Service.Services
 
             if (entity == null)
             {
-                return Response<NoDataDto>.Faild("Notfount id", 404, true); 
+                return Response<NoDataDto>.Fail("Notfount id", 404, true); 
             }
             _genericRepository.Remove(entity);
+            _genericRepository.Remove(entity2);
 
             await _unitOfWork.CommitAsync();
-            return Response<NoDataDto>.Succes(202);
+            return Response<NoDataDto>.Success(202);
         }
 
         public async Task<Response<NoDataDto>> Update(TDto entity, int id)
@@ -79,7 +80,7 @@ namespace AuthServer.Service.Services
 
             if (controlEntity == null)
             {
-                return Response<NoDataDto>.Faild("Not fount Id", 404, true);
+                return Response<NoDataDto>.Fail("Not fount Id", 404, true);
             }
 
             var updateEntity = ObjectMapper.mapper.Map<TEntity>(controlEntity);
@@ -88,7 +89,7 @@ namespace AuthServer.Service.Services
 
             await _unitOfWork.CommitAsync();
             
-            return Response<NoDataDto>.Succes(204);
+            return Response<NoDataDto>.Success(204);
         }
 
         public async Task<Response<IEnumerable<TDto>>> Where(Expression<Func<TEntity, bool>> predicate)
@@ -99,10 +100,10 @@ namespace AuthServer.Service.Services
 
             if (filterList == null)
             {
-                return Response<IEnumerable<TDto>>.Faild("Data not found", 404, true);
+                return Response<IEnumerable<TDto>>.Fail("Data not found", 404, true);
             }
 
-            return Response<IEnumerable<TDto>>.Succes(ObjectMapper.mapper.Map<IEnumerable<TDto>>(filterList), 200);
+            return Response<IEnumerable<TDto>>.Success(ObjectMapper.mapper.Map<IEnumerable<TDto>>(filterList), 200);
         }
     }
 }

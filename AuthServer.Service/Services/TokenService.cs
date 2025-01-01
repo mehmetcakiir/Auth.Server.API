@@ -3,6 +3,7 @@ using AuthServer.Core.DTOs;
 using AuthServer.Core.Models;
 using AuthServer.Core.Services;
 using CommonLibrary.Configurations;
+using CommonLibrary.Services;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
@@ -51,7 +52,7 @@ namespace AuthServer.Service.Services
 
 
         /* 
-         * Claim ifadesi OAuth 2.0 ile geln bir ifadedir
+         * Claim ifadesi OAuth 2.0 ile gelen bir ifadedir
          *
          * Bu ifade 2 anlama gelmektedir
          * 
@@ -66,7 +67,7 @@ namespace AuthServer.Service.Services
         //Token ın hangi api lere istek yapabileceklerini öğrenebilmek için audences parametre olarak alınır.
 
         //Üyelik sistemi gerektiren token oluşturma methodu
-        private IEnumerable<Claim> GetClaiem(UserApp userApp, List<String> audences)
+        private IEnumerable<Claim> GetClaiem(UserApp userApp, List<String> audiences)
         {
             //Kullanıcı ile ilgili bilgiler eklenir.
             var userList = new List<Claim>
@@ -88,7 +89,7 @@ namespace AuthServer.Service.Services
             //Token ile ilgili bilgiler eklenir
 
             //Her oudences i Token ın Payload kısmının Aud kısmına eklenir
-            userList.AddRange(audences.Select(x => new Claim(JwtRegisteredClaimNames.Aud, x)));
+            userList.AddRange(audiences.Select(x => new Claim(JwtRegisteredClaimNames.Aud, x)));
 
             return userList;
         }
@@ -119,7 +120,7 @@ namespace AuthServer.Service.Services
             var accessTokenExpiration = DateTime.Now.AddMinutes(_customTokenOption.AccessTokenExpiration);
 
             //Tokenın imzalanabilmesi için publicKey
-            var securityKey = SignService.GetSymmetricSecurtyKey(_customTokenOption.SecurtyKey);
+            var securityKey = SignService.GetSymmetricSecurtyKey(_customTokenOption.SecurityKey);
 
             //securty key ile "HmacSha256Signature" algoritması ile token imzalanır.
             SigningCredentials signingCredentials = new SigningCredentials(securityKey, SecurityAlgorithms.HmacSha256Signature);
@@ -159,7 +160,7 @@ namespace AuthServer.Service.Services
             var refreshTokenExpiration = DateTime.Now.AddMinutes(_customTokenOption.ResrefhTokenExpiration);
 
             //Tokenın imzalanabilmesi için publicKey
-            var securityKey = SignService.GetSymmetricSecurtyKey(_customTokenOption.SecurtyKey);
+            var securityKey = SignService.GetSymmetricSecurtyKey(_customTokenOption.SecurityKey);
 
             //securty key ile "HmacSha256Signature" algoritması ile token imzalanır.
             SigningCredentials signingCredentials = new SigningCredentials(securityKey, SecurityAlgorithms.HmacSha256Signature);
@@ -185,7 +186,6 @@ namespace AuthServer.Service.Services
                 AccessTokenExpiration = accessTokenExpiration,
                 RefreshToken = CreateRefreshToken(),
                 RefreshTokenExpiration = refreshTokenExpiration,
-
             };
 
             return tokenDto;

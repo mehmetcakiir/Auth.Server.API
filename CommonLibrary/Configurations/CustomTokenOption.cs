@@ -16,6 +16,6 @@ namespace CommonLibrary.Configurations
 
         public int ResrefhTokenExpiration { get; set; }
 
-        public string SecurtyKey { get; set; }
+        public string SecurityKey { get; set; }
     }
 }

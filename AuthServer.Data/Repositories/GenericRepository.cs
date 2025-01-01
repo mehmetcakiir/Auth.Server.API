@@ -51,6 +51,7 @@ namespace AuthServer.Data.Repositories
         //Verilen entity i veri tabanına ekler
         public void Remove(TEntity entity)
         {
+            _dbContext.Entry(entity).State = EntityState.Deleted;
             _dbSet.Remove(entity);
         }
 
